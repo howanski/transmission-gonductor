@@ -1,8 +1,41 @@
 {{ template "header.html" .}}
 <div class="row  mt-5">
-  <div class="col-lg-12">
+  <div class="col-lg-3 col-md-3 col-sm-2"></div>
+  <div class="col-lg-6 col-md-6 col-sm-8">
     <img src="/assets/images/logo.png" alt="" class="img-fluid">
   </div>
+  <div class="col-lg-3 col-md-3 col-sm-2"></div>
 </div>
+<div class="row  mt-5">
+  <div class="col-lg-4 col-md-3 col-sm-2"></div>
+  <div class="col-lg-4 col-md-6 col-sm-8">
+    <form>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        <label class="form-check-label" for="exampleCheck1">GOnductor active</label>
+      </div>
+      <div class="mb-3">
+        <label for="inputTransmissionHost" class="form-label">Transmission host</label>
+        <input type="text" class="form-control" id="inputTransmissionHost" aria-describedby="inputTransmissionHostHelp">
+        <div id="inputTransmissionHostHelp" class="form-text">IP address or hostname, if resolvable ;)</div>
+      </div>
+      <div class="mb-3">
+        <label for="inputTransmissionUser" class="form-label">Transmission user</label>
+        <input type="text" class="form-control" id="inputTransmissionUser">
+      </div>
+      <div class="mb-3">
+        <label for="inputTransmissionPassword" class="form-label">Transmission Password</label>
+        <input type="password" class="form-control" id="inputTransmissionPassword">
+      </div>
+
+      <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+    
+  </div>
+  <div class="col-lg-4 col-md-3 col-sm-2"></div>
+
+</div>
+
+
 
 {{ template "footer.html" .}}
