@@ -14,6 +14,7 @@ func main() {
 	router.LoadHTMLGlob("front-end/html/*")
 
 	router.Static("/assets/images", "./front-end/images")
+	router.Static("/assets/js", "./front-end/js")
 
 	router.GET("/", func(c *gin.Context) {
 

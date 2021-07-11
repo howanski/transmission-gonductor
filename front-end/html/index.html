@@ -9,28 +9,78 @@
 <div class="row  mt-5">
   <div class="col-lg-4 col-md-3 col-sm-2"></div>
   <div class="col-lg-4 col-md-6 col-sm-8">
-    <form>
-      <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-        <label class="form-check-label" for="exampleCheck1">GOnductor active</label>
-      </div>
-      <div class="mb-3">
-        <label for="inputTransmissionHost" class="form-label">Transmission host</label>
-        <input type="text" class="form-control" id="inputTransmissionHost" aria-describedby="inputTransmissionHostHelp">
-        <div id="inputTransmissionHostHelp" class="form-text">IP address or hostname, if resolvable ;)</div>
-      </div>
-      <div class="mb-3">
-        <label for="inputTransmissionUser" class="form-label">Transmission user</label>
-        <input type="text" class="form-control" id="inputTransmissionUser">
-      </div>
-      <div class="mb-3">
-        <label for="inputTransmissionPassword" class="form-label">Transmission Password</label>
-        <input type="password" class="form-control" id="inputTransmissionPassword">
-      </div>
+    <div class="container">
+      <table class="table table-sm text-light">
+        <thead>
+          <tr>
+            <th scope="col">Stat</th>
+            <th scope="col">Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Connection</td>
+            <td>Inactive</td>
+          </tr>
+          <tr>
+            <td>Last ping</td>
+            <td>Decade ago</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <button type="submit" class="btn btn-primary">Save</button>
-    </form>
-    
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingOne">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+            Transmission Settings
+          </button>
+        </h2>
+        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+          data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <form id="transmissionConfigForm">
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">GOnductor active</label>
+              </div>
+              <div class="mb-3">
+                <label for="inputTransmissionHost" class="form-label">Transmission host</label>
+                <input type="text" class="form-control" id="inputTransmissionHost"
+                  aria-describedby="inputTransmissionHostHelp">
+                <div id="inputTransmissionHostHelp" class="form-text">IP address or hostname, if resolvable ;)</div>
+              </div>
+              <div class="mb-3">
+                <label for="inputTransmissionUser" class="form-label">Transmission user</label>
+                <input type="text" class="form-control" id="inputTransmissionUser">
+              </div>
+              <div class="mb-3">
+                <label for="inputTransmissionPassword" class="form-label">Transmission Password</label>
+                <input type="password" class="form-control" id="inputTransmissionPassword">
+              </div>
+
+              <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+            Statistics
+          </button>
+        </h2>
+        <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
+          data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            :)
+          </div>
+        </div>
+      </div> -->
+    </div>
   </div>
   <div class="col-lg-4 col-md-3 col-sm-2"></div>
 
