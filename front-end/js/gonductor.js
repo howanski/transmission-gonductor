@@ -1,12 +1,13 @@
 (function (window, document, $) {
+
+    let gonductorSettings = {};
+
     $(document).ready(function () {
-        console.log("------------------------------------");
-        console.log("jQuery initialized, GOnductor ready.");
-        console.log("------------------------------------");
+        console.log("--------------------------------------");
+        console.log("jQuery initialized, running GOnductor.");
+        console.log("--------------------------------------");
+        readSettings();
         runInLoop(statsReader, 5);
-        console.log("-------------------------------");
-        console.log("GOnductor functions initialized");
-        console.log("-------------------------------");
     });
 
     let statsReader = function () {
@@ -25,6 +26,21 @@
             }
         });
     };
+
+    let readSettings = function () {
+        $.ajax({
+            type: "GET",
+            url: '/settings',
+            success: function (response) {
+                $.each(response, function (index, settingsObject) {
+                    gonductorSettings[settingsObject.ConfigKey] = settingsObject.ConfigValue;
+                });
+                console.log("-------------------------");
+                console.log("GOnductor settings loaded");
+                console.log("-------------------------");
+            }
+        });
+    }
 
     let runInLoop = function (func, loopSeconds) {
         func();
