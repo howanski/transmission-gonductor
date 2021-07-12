@@ -2,26 +2,43 @@
 
     let gonductorSettings = {};
 
+    let formInputsSetup = {
+        // format -"settingsKey": "selector"
+        "transmissionHost": "#inputTransmissionHost",
+        "transmissionUser": "#inputTransmissionUser",
+        "transmissionPassword": "#inputTransmissionPassword",
+    };
+
     $(document).ready(function () {
         console.log("--------------------------------------");
         console.log("jQuery initialized, running GOnductor.");
         console.log("--------------------------------------");
         readSettings();
         runInLoop(statsReader, 5);
+        $('#saveBtn').on('click', function (e) {
+            e.preventDefault();
+            saveSettings();
+        });
     });
 
     let statsReader = function () {
+        let statisticsMap = {
+            "connectionStatus": "#statConnectionStatus",
+            "lastPing": "#statLastPing"
+        };
         $.ajax({
             type: "GET",
             url: '/gonductor-stats',
             success: function (response) {
-                let statisticsMap = {
-                    "connectionStatus": "#statConnectionStatus",
-                    "lastPing": "#statLastPing"
-                };
                 $.each(response, function (index, value) {
                     let statBox = $(statisticsMap[index]);
                     statBox.html(value);
+                });
+            },
+            error: function (response){
+                $.each(statisticsMap, function (index, selector) {
+                    let statBox = $(selector);
+                    statBox.html('GOnductor server GOne');
                 });
             }
         });
@@ -35,10 +52,43 @@
                 $.each(response, function (index, settingsObject) {
                     gonductorSettings[settingsObject.ConfigKey] = settingsObject.ConfigValue;
                 });
-                console.log("-------------------------");
-                console.log("GOnductor settings loaded");
-                console.log("-------------------------");
+                updateFormDataFromGlobalSettings();
+                console.log("-----------------------------");
+                console.log("GOnductor settings (re)loaded");
+                console.log("-----------------------------");
             }
+        });
+    }
+
+    let saveSettings = function () {
+        readFormDataToGlobalSettings();
+        $.ajax({
+            type: "POST",
+            url: '/settings',
+            data: gonductorSettings,
+            success: function (response) {
+                console.log("------------------------");
+                console.log("GOnductor settings saved");
+                console.log("------------------------");
+                readSettings();
+            },
+            error: function (response) {
+                alert('Save error');
+            }
+        });
+    }
+
+    let readFormDataToGlobalSettings = function () {
+        $.each(formInputsSetup, function (key, selector) {
+            let jqInput = $(selector);
+            gonductorSettings[key] = jqInput.val();
+        });
+    }
+
+    let updateFormDataFromGlobalSettings = function () {
+        $.each(formInputsSetup, function (key, selector) {
+            let jqInput = $(selector);
+            jqInput.val(gonductorSettings[key]);
         });
     }
 
