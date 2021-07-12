@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -68,11 +67,10 @@ func main() {
 		body, _ := ioutil.ReadAll(c.Request.Body)
 		bodyAsString := string(body)
 		splitrParts := strings.Split(bodyAsString, "&")
-		for i := 1; i < len(splitrParts); i++ {
+		for i := 0; i < len(splitrParts); i++ {
 			splitKeyVal := strings.Split(splitrParts[i], "=") //FIXME: should be interpreted as JSON!!!
 			dbKey := splitKeyVal[0]
 			dbVal := splitKeyVal[1]
-			fmt.Println(dbKey + " wynosi " + dbVal)
 			var dbConfig ConfigStorage
 			db.First(&dbConfig, "config_key = ?", dbKey)
 			if dbConfig.ConfigKey != "" {
