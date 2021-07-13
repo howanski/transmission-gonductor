@@ -19,3 +19,6 @@
 
 # Database
 database/gonductor.sqlite
+
+# Debugging leftovers
+__debug_bin
