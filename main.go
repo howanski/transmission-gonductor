@@ -1,9 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
@@ -65,18 +65,23 @@ func main() {
 
 	router.POST("/settings", func(c *gin.Context) {
 		body, _ := ioutil.ReadAll(c.Request.Body)
-		bodyAsString := string(body)
-		splitrParts := strings.Split(bodyAsString, "&")
-		for i := 0; i < len(splitrParts); i++ {
-			splitKeyVal := strings.Split(splitrParts[i], "=") //FIXME: should be interpreted as JSON!!!
-			dbKey := splitKeyVal[0]
-			dbVal := splitKeyVal[1]
-			var dbConfig ConfigStorage
-			db.First(&dbConfig, "config_key = ?", dbKey)
-			if dbConfig.ConfigKey != "" {
-				db.Model(&dbConfig).Update("config_value", dbVal)
-			} else {
-				db.Create(&ConfigStorage{ConfigKey: dbKey, ConfigValue: dbVal})
+		var f interface{}
+		err := json.Unmarshal(body, &f)
+		if err == nil {
+			mapmap := f.(map[string]interface{})
+			for dbKey, valInterface := range mapmap {
+				if dbKey != "" {
+					if valInterface != "" {
+						value := valInterface.(string)
+						var dbConfig ConfigStorage
+						db.First(&dbConfig, "config_key = ?", dbKey)
+						if dbConfig.ConfigKey != "" {
+							db.Model(&dbConfig).Update("config_value", value)
+						} else {
+							db.Create(&ConfigStorage{ConfigKey: dbKey, ConfigValue: value})
+						}
+					}
+				}
 			}
 		}
 	})

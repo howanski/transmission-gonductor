@@ -65,7 +65,7 @@
         $.ajax({
             type: "POST",
             url: '/settings',
-            data: gonductorSettings,
+            data: JSON.stringify(gonductorSettings),
             success: function (response) {
                 console.log("------------------------");
                 console.log("GOnductor settings saved");
