@@ -32,20 +32,39 @@
 
     <div class="accordion accordion-flush" id="accordionFlushExample">
       <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+            Transmission Settings
+          </button>
+        </h2>
+        <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
+          data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <form id="transmissionConfigForm">
+              <div class="mb-3 form-check" data-bs-toggle="tooltip" data-bs-placement="top"
+                title="Queued files are set to low priority, but alphabetically first queued file is downloaded with high priority">
+                <input type="checkbox" class="form-check-input" id="checkTransmissionAlphabeticalPriority">
+                <label class="form-check-label" for="checkTransmissionAlphabeticalPriority">Manage priority
+                  alphabetically
+                </label>
+              </div>
+              <button type="submit" class="btn btn-primary saveBtn">Save</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
         <h2 class="accordion-header" id="flush-headingOne">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
             data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-            Transmission Settings
+            Transmission Access Settings
           </button>
         </h2>
         <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
           data-bs-parent="#accordionFlushExample">
           <div class="accordion-body">
-            <form id="transmissionConfigForm">
-              <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">GOnductor active</label>
-              </div>
+            <form id="transmissionAccessConfigForm">
               <div class="mb-3">
                 <label for="inputTransmissionHost" class="form-label">Transmission host</label>
                 <input type="text" class="form-control" id="inputTransmissionHost"
@@ -61,25 +80,12 @@
                 <input type="password" class="form-control" id="inputTransmissionPassword">
               </div>
 
-              <button type="submit" id="saveBtn" class="btn btn-primary">Save</button>
+              <button type="submit" class="btn btn-primary saveBtn">Save</button>
             </form>
           </div>
         </div>
       </div>
-      <!-- <div class="accordion-item">
-        <h2 class="accordion-header" id="flush-headingTwo">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-            data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-            Statistics
-          </button>
-        </h2>
-        <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo"
-          data-bs-parent="#accordionFlushExample">
-          <div class="accordion-body">
-            :)
-          </div>
-        </div>
-      </div> -->
+
     </div>
   </div>
   <div class="col-lg-4 col-md-3 col-sm-2"></div>

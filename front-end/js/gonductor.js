@@ -9,13 +9,18 @@
         "transmissionPassword": "#inputTransmissionPassword",
     };
 
+    let formCheckboxesSetup = {
+        // format -"settingsKey": "selector"
+        "transmissionManagePrioritiesAlphabetically": "checkTransmissionAlphabeticalPriority"
+    }
+
     $(document).ready(function () {
         console.log("--------------------------------------");
         console.log("jQuery initialized, running GOnductor.");
         console.log("--------------------------------------");
         readSettings();
         runInLoop(statsReader, 5);
-        $('#saveBtn').on('click', function (e) {
+        $('.saveBtn').on('click', function (e) {
             e.preventDefault();
             saveSettings();
         });
@@ -83,12 +88,29 @@
             let jqInput = $(selector);
             gonductorSettings[key] = jqInput.val();
         });
+        $.each(formCheckboxesSetup, function (key, selectorId) {
+            let jqInput = $("#" + selectorId);
+            if (jqInput.is(":checked")) {
+                gonductorSettings[key] = "yes";
+              } else {
+                gonductorSettings[key] = "no";
+              }
+        });
     }
 
     let updateFormDataFromGlobalSettings = function () {
         $.each(formInputsSetup, function (key, selector) {
             let jqInput = $(selector);
             jqInput.val(gonductorSettings[key]);
+        });
+        $.each(formCheckboxesSetup, function (key, selectorId) {
+            // jQuery sucks in checkboxes, attr, nor prop are working
+            let cBox = document.getElementById(selectorId);
+            if (gonductorSettings[key] == "yes"){
+                cBox.checked = true;
+            } else {
+                cBox.checked = false;
+            }
         });
     }
 
