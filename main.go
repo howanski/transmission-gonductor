@@ -19,6 +19,21 @@ type ConfigStorage struct {
 
 var router *gin.Engine
 
+func passDataToDaemon(db *gorm.DB) {
+	var configs []ConfigStorage
+	db.Find(&configs)
+	configsLen := len(configs)
+
+	sliceWithKeys := make([]string, configsLen)
+	sliceWithValues := make([]string, configsLen)
+	for i := 0; i < configsLen; i++ {
+		currentConfig := configs[i]
+		sliceWithKeys[i] = currentConfig.ConfigKey
+		sliceWithValues[i] = currentConfig.ConfigValue
+	}
+	backend.ReceiveSettings(sliceWithKeys, sliceWithValues)
+}
+
 func main() {
 
 	db, err := gorm.Open(sqlite.Open("database/gonductor.sqlite"), &gorm.Config{})
@@ -27,6 +42,8 @@ func main() {
 	}
 
 	db.AutoMigrate(&ConfigStorage{})
+
+	passDataToDaemon(db)
 
 	router = gin.Default()
 
@@ -84,6 +101,7 @@ func main() {
 					}
 				}
 			}
+			passDataToDaemon(db)
 		}
 	})
 
