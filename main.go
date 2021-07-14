@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"howanski/transmission-gonductor/backend"
 	"io/ioutil"
 	"net/http"
 
@@ -86,5 +87,6 @@ func main() {
 		}
 	})
 
-	router.Run()
+	go router.Run()
+	backend.TransmissionDaemon()
 }
