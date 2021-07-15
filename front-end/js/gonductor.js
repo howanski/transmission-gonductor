@@ -11,7 +11,8 @@
 
     let formCheckboxesSetup = {
         // format -"settingsKey": "selector"
-        "transmissionManagePrioritiesAlphabetically": "checkTransmissionAlphabeticalPriority"
+        "transmissionManagePrioritiesAlphabetically": "checkTransmissionAlphabeticalPriority",
+        "gonductorDebugToTerminal": "gonductorSpamTerminal"
     }
 
     $(document).ready(function () {

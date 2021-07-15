@@ -65,10 +65,7 @@ func main() {
 	router.GET("/gonductor-stats", func(c *gin.Context) {
 		c.JSON(
 			http.StatusOK,
-			gin.H{
-				"connectionStatus": "Ruined",
-				"lastPing":         "Never",
-			},
+			backend.GiveStatistics(),
 		)
 	})
 
