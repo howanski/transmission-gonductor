@@ -83,7 +83,7 @@ func doEvery(d time.Duration, f func(time.Time)) {
 	}
 }
 
-func makeTransmissionRequest(json_data []byte) {
+func makeTransmissionRequest(json_data []byte) []byte {
 	if spamTerminal {
 		fmt.Println("----------------------------------------> SENDING: " + string(json_data))
 	}
@@ -91,7 +91,7 @@ func makeTransmissionRequest(json_data []byte) {
 	userName := findInSettings("transmissionUser")
 	password := findInSettings("transmissionPassword")
 	host := findInSettings("transmissionHost")
-	var fullReqString = "http://" + host + ":9091/transmission/rpc/torrent-get"
+	var fullReqString = "http://" + host + ":9091/transmission/rpc/"
 
 	client := &http.Client{
 		Timeout: time.Second * 2,
@@ -105,7 +105,11 @@ func makeTransmissionRequest(json_data []byte) {
 		req.Header.Set("X-Transmission-Session-Id", transmissionCrossKey)
 		response, err := client.Do(req)
 		if err != nil {
-			fmt.Printf("[2] Got error %s", err.Error())
+			saveStatistic("connectionStatus", "Transmission server GOne")
+			if spamTerminal {
+				fmt.Printf("[No response] Got error %s", err.Error())
+			}
+
 		} else {
 			if response.StatusCode == 409 {
 				saveStatistic("connectionStatus", "Updating CORS")
@@ -114,7 +118,14 @@ func makeTransmissionRequest(json_data []byte) {
 				if spamTerminal {
 					fmt.Println("Cross-dressing for CSRF: " + transmissionCrossKey)
 				}
-				makeTransmissionRequest(json_data)
+				deepBody := makeTransmissionRequest(json_data)
+				return deepBody
+			} else if response.StatusCode == 401 {
+				saveStatistic("connectionStatus", "Authorization error")
+				saveStatistic("lastPing", getHumanReadableTime())
+				if spamTerminal {
+					fmt.Println("--------------- [ TRANSMISSION AUTHORIZATION ERROR ] ---------------")
+				}
 			} else {
 				body, err := ioutil.ReadAll(response.Body)
 				if err != nil {
@@ -127,10 +138,13 @@ func makeTransmissionRequest(json_data []byte) {
 						fmt.Print("RESPONSE: ------------------------> " + sb)
 					}
 					defer response.Body.Close()
+					return body
 				}
 			}
 		}
 	}
+	var failResponse []byte
+	return failResponse
 }
 
 func getGeneralTorrentsData() {
