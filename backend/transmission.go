@@ -2,6 +2,7 @@ package backend
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -109,7 +110,6 @@ func makeTransmissionRequest(json_data []byte) []byte {
 			if spamTerminal {
 				fmt.Printf("[No response] Got error %s", err.Error())
 			}
-
 		} else {
 			if response.StatusCode == 409 {
 				saveStatistic("connectionStatus", "Updating CORS")
@@ -147,9 +147,45 @@ func makeTransmissionRequest(json_data []byte) []byte {
 	return failResponse
 }
 
-func getGeneralTorrentsData() {
-	generalQuestion := []byte(`{"method":"torrent-get","arguments":{"fields": ["id", "name", "totalSize"]}}`)
-	makeTransmissionRequest(generalQuestion)
+func gutterJsonInterfaceStringIndexed(outerInterface interface{}, key string) interface{} {
+	mapmap := outerInterface.(map[string]interface{})
+	innerInterface := mapmap[key]
+	return innerInterface
+}
+
+func gutterJsonInterfaceIntegerIndexed(outerInterface interface{}, key int) interface{} {
+	mapmap := outerInterface.([]interface{})
+	innerInterface := mapmap[key]
+	return innerInterface
+}
+
+func jsonBytesToInterface(bodyBytes []byte) interface{} {
+	var interfaceWithJson interface{}
+	json.Unmarshal(bodyBytes, &interfaceWithJson)
+	return interfaceWithJson
+}
+
+func getLengthOfArrayInInterface(face interface{}) int {
+	faceArr := face.([]interface{})
+	return len(faceArr)
+}
+
+func getGeneralTorrentsData() bool {
+	generalQuestion := []byte(`{"method":"torrent-get","arguments":{"fields": ["id", "name", "totalSize", "files", "fileStats", "rateDownload", "isFinished", "isStalled", "eta"]}}`)
+	jsonInterfaceResponse := jsonBytesToInterface(makeTransmissionRequest(generalQuestion))
+	if jsonInterfaceResponse != nil {
+		arguments := gutterJsonInterfaceStringIndexed(jsonInterfaceResponse, "arguments")
+		torrents := gutterJsonInterfaceStringIndexed(arguments, "torrents")
+		fmt.Println("-------------------------------------------------------------------")
+		for i := 0; i < getLengthOfArrayInInterface(torrents); i++ {
+			torrent := gutterJsonInterfaceIntegerIndexed(torrents, i)
+			fmt.Println(i)
+			fmt.Println(gutterJsonInterfaceStringIndexed(torrent, "name"))
+		}
+		fmt.Println("-------------------------------------------------------------------")
+		return true
+	}
+	return false
 }
 
 func makeOrchestratedRound(t time.Time) {
