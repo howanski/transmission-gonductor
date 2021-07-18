@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sort"
 	"time"
 )
 
@@ -108,7 +109,8 @@ func makeTransmissionRequest(json_data []byte) []byte {
 	userName := findInSettings("transmissionUser")
 	password := findInSettings("transmissionPassword")
 	host := findInSettings("transmissionHost")
-	var fullReqString = "http://" + host + ":9091/transmission/rpc/"
+	hostPort := findInSettings("transmissionHostPort")
+	var fullReqString = "http://" + host + ":" + hostPort + "/transmission/rpc/"
 
 	client := &http.Client{
 		Timeout: time.Second * 2,
@@ -250,6 +252,9 @@ func updatePrioritiesOnSubFiles() {
 			var foundHighPriority bool = false
 			var highOnes []TorrentInsideFile
 			var lowOnes []TorrentInsideFile
+			sort.Slice(torrentFiles[:], func(i, j int) bool {
+				return torrentFiles[i].FileName < torrentFiles[j].FileName
+			})
 			for j := 0; j < len(torrentFiles); j++ {
 				torrentFile := torrentFiles[j]
 				torrentFilePriorityShouldBeHigh := torrentFile.FileIsWanted && (torrentFile.FileLength != torrentFile.FileLengthDone)
@@ -285,10 +290,6 @@ func updatePrioritiesOnSubFiles() {
 			makeTransmissionRequest(instruction)
 
 		}
-		if spamTerminal {
-			fmt.Println(torrentStorage)
-		}
-
 	}
 }
 

@@ -5,6 +5,7 @@
     let formInputsSetup = {
         // format -"settingsKey": "selector"
         "transmissionHost": "#inputTransmissionHost",
+        "transmissionHostPort": "#inputTransmissionHostPort",
         "transmissionUser": "#inputTransmissionUser",
         "transmissionPassword": "#inputTransmissionPassword",
     };
