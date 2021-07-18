@@ -13,6 +13,8 @@ type TorrentInsideFile struct {
 	FileName       string
 	FileLength     int
 	FileLengthDone int
+	FileIsWanted   bool
+	FileId         string
 }
 
 type Torrent struct {
@@ -212,19 +214,19 @@ func getGeneralTorrentsData() bool {
 			files := gutterJsonInterfaceStringIndexed(torrent, "files")
 			fileStats := gutterJsonInterfaceStringIndexed(torrent, "fileStats")
 			fileStatsLength := getLengthOfArrayInInterface(fileStats)
-			if fileStatsLength > 0 {
+			if fileStatsLength > 0 { // Any files known
 				var torrentFilez []TorrentInsideFile
 				for j := 0; j < fileStatsLength; j++ {
 					fileData := gutterJsonInterfaceIntegerIndexed(files, j)
 					fileStatData := gutterJsonInterfaceIntegerIndexed(fileStats, j)
 					isWanted := faceToString(gutterJsonInterfaceStringIndexed(fileStatData, "wanted"))
-					if isWanted == "true" {
-						var terrentFile TorrentInsideFile
-						terrentFile.FileName = faceToString(gutterJsonInterfaceStringIndexed(fileData, "name"))
-						terrentFile.FileLength = faceToInt(gutterJsonInterfaceStringIndexed(fileData, "length"))
-						terrentFile.FileLengthDone = faceToInt(gutterJsonInterfaceStringIndexed(fileData, "bytesCompleted"))
-						torrentFilez = append(torrentFilez, terrentFile)
-					}
+					var terrentFile TorrentInsideFile
+					terrentFile.FileName = faceToString(gutterJsonInterfaceStringIndexed(fileData, "name"))
+					terrentFile.FileLength = faceToInt(gutterJsonInterfaceStringIndexed(fileData, "length"))
+					terrentFile.FileLengthDone = faceToInt(gutterJsonInterfaceStringIndexed(fileData, "bytesCompleted"))
+					terrentFile.FileIsWanted = isWanted == "true"
+					terrentFile.FileId = fmt.Sprint(j)
+					torrentFilez = append(torrentFilez, terrentFile)
 				}
 
 				var storageRecord = Torrent{}
@@ -239,13 +241,67 @@ func getGeneralTorrentsData() bool {
 	return false
 }
 
+func updatePrioritiesOnSubFiles() {
+	ifManage := findInSettings("transmissionManagePrioritiesAlphabetically")
+	if ifManage == "yes" {
+		for i := 0; i < len(torrentStorage); i++ {
+			torrentDescription := torrentStorage[i]
+			torrentFiles := torrentDescription.TorrentFiles
+			var foundHighPriority bool = false
+			var highOnes []TorrentInsideFile
+			var lowOnes []TorrentInsideFile
+			for j := 0; j < len(torrentFiles); j++ {
+				torrentFile := torrentFiles[j]
+				torrentFilePriorityShouldBeHigh := torrentFile.FileIsWanted && (torrentFile.FileLength != torrentFile.FileLengthDone)
+				if torrentFilePriorityShouldBeHigh {
+					if foundHighPriority {
+						lowOnes = append(lowOnes, torrentFile)
+					} else {
+						highOnes = append(highOnes, torrentFile)
+						foundHighPriority = true
+					}
+				} else {
+					lowOnes = append(lowOnes, torrentFile)
+				}
+			}
+			var lowIds string
+			for k := 0; k < len(lowOnes); k++ {
+				lowFile := lowOnes[k]
+				lowIds += lowFile.FileId
+				if k < len(lowOnes)-1 {
+					lowIds += ","
+				}
+			}
+			var highIds string
+			for k := 0; k < len(highOnes); k++ {
+				highFile := highOnes[k]
+				highIds += highFile.FileId
+				if k < len(highOnes)-1 {
+					highIds += ","
+				}
+
+			}
+			instruction := []byte(`{"method":"torrent-set","arguments":{"ids":[` + torrentDescription.TorrentId + `],"priority-low":[` + lowIds + `],"priority-high":[` + highIds + `]}}`)
+			makeTransmissionRequest(instruction)
+
+		}
+		if spamTerminal {
+			fmt.Println(torrentStorage)
+		}
+
+	}
+}
+
 func makeOrchestratedRound(t time.Time) {
 	fmt.Println("[GONDUCTOR PULSE] [" + getHumanReadableTime() + "]")
 
 	if spamTerminal {
 		fmt.Println("[daemon tick] starting functions round")
 	}
-	getGeneralTorrentsData()
+	success := getGeneralTorrentsData()
+	if success {
+		updatePrioritiesOnSubFiles()
+	}
 	if spamTerminal {
 		fmt.Println("[daemon tick] round end")
 	}
