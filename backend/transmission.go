@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -253,7 +254,7 @@ func updatePrioritiesOnSubFiles() {
 			var highOnes []TorrentInsideFile
 			var lowOnes []TorrentInsideFile
 			sort.Slice(torrentFiles[:], func(i, j int) bool {
-				return torrentFiles[i].FileName < torrentFiles[j].FileName
+				return strings.ToLower(torrentFiles[i].FileName) < strings.ToLower(torrentFiles[j].FileName)
 			})
 			for j := 0; j < len(torrentFiles); j++ {
 				torrentFile := torrentFiles[j]
