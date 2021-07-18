@@ -9,6 +9,20 @@ import (
 	"time"
 )
 
+type TorrentInsideFile struct {
+	FileName       string
+	FileLength     int
+	FileLengthDone int
+}
+
+type Torrent struct {
+	TorrentId    string
+	TorrentName  string
+	TorrentFiles []TorrentInsideFile
+}
+
+var torrentStorage []Torrent
+
 type Statistic struct {
 	StatisticKey   string
 	StatisticValue string
@@ -170,19 +184,56 @@ func getLengthOfArrayInInterface(face interface{}) int {
 	return len(faceArr)
 }
 
+func faceToString(x interface{}) string {
+	str := fmt.Sprintf("%v", x)
+	return str
+}
+
+func faceToFloat(face interface{}) float64 {
+	float := face.(float64)
+	return float
+}
+
+func faceToInt(face interface{}) int {
+	float := faceToFloat(face)
+	inter := int(float)
+	return inter
+}
+
 func getGeneralTorrentsData() bool {
-	generalQuestion := []byte(`{"method":"torrent-get","arguments":{"fields": ["id", "name", "totalSize", "files", "fileStats", "rateDownload", "isFinished", "isStalled", "eta"]}}`)
+	generalQuestion := []byte(`{"method":"torrent-get","arguments":{"fields": ["id", "name", "totalSize", "sizeWhenDone", "files", "fileStats", "rateDownload", "isFinished", "isStalled", "eta", "priorities", "wanted"]}}`)
 	jsonInterfaceResponse := jsonBytesToInterface(makeTransmissionRequest(generalQuestion))
 	if jsonInterfaceResponse != nil {
 		arguments := gutterJsonInterfaceStringIndexed(jsonInterfaceResponse, "arguments")
 		torrents := gutterJsonInterfaceStringIndexed(arguments, "torrents")
-		fmt.Println("-------------------------------------------------------------------")
+		torrentStorage = nil
 		for i := 0; i < getLengthOfArrayInInterface(torrents); i++ {
 			torrent := gutterJsonInterfaceIntegerIndexed(torrents, i)
-			fmt.Println(i)
-			fmt.Println(gutterJsonInterfaceStringIndexed(torrent, "name"))
+			files := gutterJsonInterfaceStringIndexed(torrent, "files")
+			fileStats := gutterJsonInterfaceStringIndexed(torrent, "fileStats")
+			fileStatsLength := getLengthOfArrayInInterface(fileStats)
+			if fileStatsLength > 0 {
+				var torrentFilez []TorrentInsideFile
+				for j := 0; j < fileStatsLength; j++ {
+					fileData := gutterJsonInterfaceIntegerIndexed(files, j)
+					fileStatData := gutterJsonInterfaceIntegerIndexed(fileStats, j)
+					isWanted := faceToString(gutterJsonInterfaceStringIndexed(fileStatData, "wanted"))
+					if isWanted == "true" {
+						var terrentFile TorrentInsideFile
+						terrentFile.FileName = faceToString(gutterJsonInterfaceStringIndexed(fileData, "name"))
+						terrentFile.FileLength = faceToInt(gutterJsonInterfaceStringIndexed(fileData, "length"))
+						terrentFile.FileLengthDone = faceToInt(gutterJsonInterfaceStringIndexed(fileData, "bytesCompleted"))
+						torrentFilez = append(torrentFilez, terrentFile)
+					}
+				}
+
+				var storageRecord = Torrent{}
+				storageRecord.TorrentName = faceToString(gutterJsonInterfaceStringIndexed(torrent, "name"))
+				storageRecord.TorrentId = faceToString(gutterJsonInterfaceStringIndexed(torrent, "id"))
+				storageRecord.TorrentFiles = torrentFilez
+				torrentStorage = append(torrentStorage, storageRecord)
+			}
 		}
-		fmt.Println("-------------------------------------------------------------------")
 		return true
 	}
 	return false
