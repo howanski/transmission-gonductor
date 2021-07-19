@@ -1,0 +1,16 @@
+version: '3.5'
+services:
+    gonductor:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: "gonductor"
+        ports:
+            - 0.0.0.0:8080:8080
+        networks:
+            - gonductor_net
+        restart: always
+        volumes:
+            - ./../:/go/src/app/
+networks:
+    gonductor_net:

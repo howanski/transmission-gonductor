@@ -25,7 +25,9 @@ I think i'll make some compiler script later, it shouldn't be hard.
 
 > Docker
 
-Docker instructions will be added soon, I need some time to sleep too :)
+As simple as running on Linux: just `cd docker` and then `./run_in_docker.sh`
+
+It takes some time to fetch needed files for first in-Docker run.
 
 # Usage
 User Interface is hosted on [Port 8080](http://localhost:8080/) by default.
