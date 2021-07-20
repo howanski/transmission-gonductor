@@ -21,7 +21,7 @@ By default just run `server_run.sh` script, make sure you have go installed in y
 
 > Windows
 
-I think i'll make some compiler script later, it shouldn't be hard.
+For now only compiler stub exists as custom Docker image is needed to cross-compile go-sqlite3 modules with working cgo. I like the idea of cross-compilation as I treat Windows as consumer OS and prefer development to be done under linux. Once I solve cross-compilation problem, this info will be updated. More info on CGO [--> here <--](https://www.x-cellent.com/blog/cgo-bindings/)
 
 > Docker
 
