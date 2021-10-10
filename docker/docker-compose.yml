@@ -1,4 +1,3 @@
-version: '3.5'
 services:
     gonductor:
         build:
@@ -12,5 +11,10 @@ services:
         restart: always
         volumes:
             - ./../:/go/src/app/
+        logging:
+          driver: json-file
+          options:
+              max-size: "5m"
+              max-file: "2"
 networks:
     gonductor_net:
